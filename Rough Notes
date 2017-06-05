@@ -1,0 +1,412 @@
+1. Both the constriction PSO and inertia PSO make use of values, x and w, that are used to control the growth of values in the update equation. These variables both in the range [0,1] are multiplied into a component of the velocity update equation and this stops the values from this equation from growing too quickly. The purpose of this, in both cases, is to balance the exploration/exploitation tradeoff in terms of large velocity updates favouring exploration and small, exploitation. Similarly, both psos with this components will display similar behaviour for similar vlaues with low values of w and x, producing exploitation and large values, exploration. [Reference to page 309 of book] and is further supported by the work done in [eberhart_shi]
+
+2. When an inertia value of 1 is chosen, then the PSO velocity update equation devolves back into the original form, fundamentally, as no modification is made to the inertia component of the equation. This weighs the previous velocity the same in each update equation and if w=1, then the behaviour observed is such that the velocities will increase over time,initially slowly but then rapidly. As velocities increase over time, possibly to a maximum value if velocity clamping is in place, the swarm will ultimately diverge. This is because, their increased inertia components or momentum, which only increase over time, rapidly favours heavily exploration and particles are moving too fast to exploit or refine solutions in good areas. Rather, they overshoot or otherwise miss good areas because their inertia component is larger than their social and cognitive components, and this effect worsens over time. Unable to overcome their inertia component's influence, the particles fail to make use of prior good positions and other particle's good positions and cannot converge to a solution as a result. [reference to engel book]
+
+3. The ARPSO specified in [Riget02adiversity-guided], and is similar to the MPPSO described in [al-kazemi_mohan_2000]. However ARPSO was, in the original paper, only applied to a single swarm. Here, presented below, is a conceptual application of ARPSO to a subswarm model similar to the one presented in [vandenbergh_engelbrecht_2004].
+
+The sub-swarms are initialised to provide as much coverage of the search space as possible. This is to give the full set of swarms as much information coverage as possible. The next step is to apply the logic that governs the phase transition. In the original ARPSO, phase transitions happened when the diversity of the swarm either fell below a certain point or rose above a certain point, transitioning to attractive or repulsive phases respectively.
+
+With subswarms, the following diversity metrics are presented. In each case, phase transition would occur when the metric is triggered switching to the appropriate phase.
+
+1) Average Diversity Metric - In this metric, the average of the diversity measurements is taken across all subswarms and then considered against the dHigh and dLow. If the average is out of the bounds, on either side, the appropriate phase switch will happen. This approach has a number of issues. 
+	1) It is susceptible to outliers, as in the original, where a single clustered, or spread out subswarm can, just like with a particle, influence the diversity score causing a premature phase switch to occur. 
+
+	For this reason, the second metric, is preferred.
+
+2) Consensus protocol- In this metric, each of the subswarms will be evaluated with the diversity function. Each then makes a decision, HIGH,LOW,NONE, where HIGH indicates a diversity higher than the dHigh control parameter, LOW indicates a diversity lower than the dLow control parameter and NONE indicating a diversity within the two bounds. The tally of the decisions is taken across all of the subswarms and each decision is counted. The majority decision is what then happens. 
+
+If the majority of the subswarms indicated HIGH, then all subswarms switch to a repelling phase. Similarly, if the majority indicate LOW, then all the subswarms switch to an attracting phase. If the majority report NONE, no phase transition occurs.
+
+The benefits to this approach are:
+	1) Outliers are less significant - Each subswarm only has the single vote it can cast towards the decision of whether to switch phases. Therefore, any particularly wayward or clustered subswarm outstanding from the rest cannot heavily influence the behaviour of others.
+	2) Majority Decision - The majority decision deciding when to switch phases ensures that phase switches are only done when the evidence to switch is more heavily presented. The majority of swarms must be showing the same behaviour in order to require a phase shift. This increases the time spent in each phase as more of the subswarms must be below/above the bounds to trigger a transition, allowing some to explore/exploit well while the majority of the subswarms move towards a decision. The original ARPSO switched immediately and therefore lost some opportunity to benefit from both the low/high diversity.
+ 
+Therefore the consensus protocol metric, as described, would use subswarms to ensure an improved phase transition metric.
+
+4. The CPSO-Sk, first proposed by Van den Bergh and Engelbrecht, is a cooperative based PSO algorithm variant, found in [Bergh00cooperativelearning].
+
+The primary issue with CPSO-Sk is that it will suffer when the problem to be solved has a large degree of inter-dependency between variables.
+
+Consider the problem of designing a blade, made of a composite of materials, that will be used in a turbine in an underwater or aquatic environment. The blade has several design considerations as well as several optimisation considerations. These include the material composition, the general structural design and the cost factor. These objectives boil down to several dozen parameters such as thickness,layer numbers and so on. 
+
+The issue, is that variables are highly interdependent. The thickness for example strongly relates to the number of layers and the cost would strongly relate to several of the construction variables. 
+
+Therefore using CPSO-Sk to optimise a solution for this kind of problem would run into the issue that the strong variable interdepedence undermines the overall effectiveness of the subswarms as some of them moving away from their optimas may yield a small increase in fitness as opposed to if they all moved to their optimas which may yield a larger increase in fitness.
+
+A proposed method to overcome this problem would work as follows:
+The method makes use of two parallel swarm populations: A and Control Swarm. The A swarm is divided into subswarms as per normal. The Control Swarm remains a single particle swarm focused on the full scope of the problem.
+
+	1) Each subswarm has a best particle separate to the other particles in the subswarm
+	2) Each iteration, this particle called P' is assigned the components of the best performing particle in the subswarm. No assignment takes place if the fitness of the new best particle is less than the prior one.
+	3) Now, compare each of the P' particles in all the subswarms based on their fitness.
+	Choose a combination of each such that the union of their parameters is the set of all the problem parameters and has the best fitness. Assign this configuration to all particles in the Control Swarm and let them run an iteration.
+	4) Before the new iteration, randomise which parameters each of the subswarms is dealing with.
+
+The effect of this parallel optimisation is that one set of subswarms optimise the variable configuration for use by another population in real time. 
+
+5. Extending the Predator-Prey PSO proposed Silva et al to allow for multiple predators is done by making the following changes:
+
+	1) Multiple Predators - Instead of one, multiple predator particles are initialised at the same time as the initial prey particles. There should be a number of predators in numbers less than or equal to the number of prey. Too many predators will result in excessive prey migrations, that is more predators increases the chances that prey will flee and move away from good positions that a single predator would not be able to move them from. This mirrors the analogy in nature in that too many predator species in an area quickly depopulates the area of prey species who are either killed or force to migrate to safer areas.
+
+	2) Decreasing predator population - Over time, the population of the predator particles should decrease until only one predator remains, who will chase the global best prey particle. The initial number can therefore be equal to the number of prey particles. The reasoning for this is that initially, you will want to have great exploration of the space. A high number of predators will prevent prey particles from stagnating by virtue of their repelling force. However, over time, the particles must favour exploitation to ensure that they converge towards a point. Reducing the number of predators to 1, will still mean that the best solution, will be forced to continue to refine itself, potentially, as the best predator will always remain in the space, leading to a theoretically better performance.
+
+	This extends the original analogy in that our predator particle represents a variety of predator species and our prey, just one species. In such a circumstance, the predators will eventually move away until the most adept predator for the prey remains in the niche.
+
+	3) Ranking Scheme - The first major alteration to the algorithm is a ranking scheme. When evaluating prey fitness, each of the prey particles is ranked according to their fitness with the best particle being the first one. This provides a spatially independent method of breaking the prey particles into groups. Ranking them on spatial performance introduces additional complexity O(n^2) and becomes less meaningful as dimensions increase.
+
+	Now, all of the predators are placed into ranks based on their fitness for similar reasons as mentioned above.
+
+	This ranking mechanism ensures that the predators are placed into a ranking not based on their own particle fitness, but rather of the fitness of the prey particles they are currently following. 
+
+	4) Behavioural Changes - Now that the ranking has been completed, the next step is to provide the new behavioural changes to how predators and prey interact. 
+
+		Prey - Randomly chose a predator particle to be considered when making using of the specialised velocity update equation per prey particle.
+
+		Additionally, the Fear Probably Pf, is modified based on the ranking differences between the predator and prey particles. If the predator is ranked higher than the prey, half the probability required for the predator to cause the prey to use the specialised velocity update equation. If the prey is ranked above the predator,double the probablity required for the predator particle to cause the prey particle to use the specialised velocity update equation. Do not modify the probability if they are of the same rank. 
+
+		This will modify the prey behaviour in drastic ways. Firstly, predators of greater rank can exert huge influence to repel prey and prey can resist the predations of less significant predators. This mirrors in some respects how various sets of predator-prey species interact and how some predators pose more threat than others to prey species.
+
+		Predators - The predator particles choose a random prey particle of lesser or equal rank to be attracted to. The modification means that high ranking particles can exert a pressure on moving any kind of particle whereas low ranking predators can only influence low ranking prey who when moving, will allow the predators to increase in ranking as the prey increases in ranking.
+
+6. In the work by Blackwell and Bentley, [Blackwell:2002:DSC:2955491.2955495], the authors proposed the creation of a charged particle swarm, with some particles in the swarm maintaining a repulsive force and other particles remaining neutrally charged. The non-neutral particles however repel each other to maintain diversity. 
+
+In examining the concept of adding negatively charged particles, we have to consider the following. 
+
+Firstly, in the atomic analogy, negatively charged particles would be attracted to particles with an opposing charge. That would be the non-neutral particles above. Particles with a negative charge would be attracted to particles with the opposite charge. This has some implications on the behaviour of the algorithm as a whole.
+
+On the negative side, this undermines the original reason for having charged and neutral particles which was to maintain diversity in the algorithm. Some particles which are attracted to opposite charged particles, means that those particles will be attracted to clusters of opposingly charged particles and reduce diversity in terms of forming clusters of positive and negative charged particles which could be reduced to non-charged particles in principle.
+
+On the positive side, the negatively charged particles will increase the capacity of the algorithm to exploit by adding a third force component to the behaviour. The negative particles will be repelled by other negative particles according to the analogy. This means that the positive and negative particles will now exist in a state of change where similarly charged particles repel each other, towards, opposite charged particles. If the initial concentrations of both are high, it will help to form clusters of charged(positive and negative) over time enabling exploitation of good positions by the charged pairs.
+
+7. A proposed method to dynamically determine the radius selection for Quantum PSO would work as follows:
+
+	1) Rank all of the particles according to their fitness. 
+	This will invoke a cost of O(n^2)
+	2) Compute the radius as the average of sum of the closest particle and most distance particle from the best(second ranked and last ranked particle).
+	This invokes a cost of O(n)
+
+	The final cost for the calculation is O(n^2)+O(n)=O(n^2)
+
+8. 
+	The effect of w, the inertia weight, has, is initially thought best in terms of how it affects the overall velocity of a particle being updated.
+	a) In the case where w is close to 0, the velocity of the particle will take minimal influence from its prior velocity. The effect of this is that over time, the velocity of the pso will steadily plateau and decrease as the inertia component tends towards 0, leaving only the influence of the cognitive and social component to guide the search.
+
+	While reliance on cognitive and social components might be good for refining solutions, without any inertia presence, a partical is prone to rapidly shifting its postion from one iteration to the next as no inertia force resists the attraction either of the social component or the cognitive one.
+
+	The effect on particle behaviour is that particles become more chaotic, unable to anchor themselves in the search space and the swarm diverges.
+
+	b) When w=1, the inertia component possesses the full influence it has on each successive velocity update. Consequently, the velocity of the particles will rapidly grow, generally meaning that convergence will not happen as the particles will be moving too fast to stay in an good optima; rather they will move towards optima but then move past, their inertia carrying them beyond.
+
+	The assertions made here are derived from the work done in [LiuML16], which contains a thorough analysis of the BPSO with regards to Inertia Weight.
+
+9. Levy Flight, which is a type of randon walk with step sizes taken based on the Levy Distribution [mandelbrot_1983].
+
+A method of introducing a Levy Flight into a PSO algorithm would be to make use of the stochastic capacity of the Levy to redistribute particles in the search space. One of the major issues with PSO is coverage of the search space and exploration of the space to prevent premature convergence. 
+
+Levy Flight has the potential to dramatically increase the search potential of PSO by using values sampled from a Levy flight in two ways.
+
+1) Initially distribute particals in the search space with values sampled from Levy Flight
+2) Redistribute any particles that are stagnating in a local minima by resampling a new position for the particle from a Levy Flight.
+
+The motivations for this are as follows:
+
+The initial distribution of the search space in terms of particles is very important to increase the chances of a particle being able to find a good optima, and then exert that influence to other particles who use that information to inform their own searches. 
+
+The sampling from Levy Flight for the initial coverage will help give better search coverage.
+
+Secondly, redistributing stagnant particles, detected to not change over X iterations, will prevent particles from being trapped in local minima. The levy flight will let us randomly assign a particle to a totally new position in the search space, from which it can renew its search. When the majority of particles are detected to be stagnant, then it can be surmised that a convergence event has occurred and the process can stop.
+
+The proposal here is corroborated by the work done in [Haklı2014333] where the authors made use of a limit mechanism to control when to redistribute with Levy Flights and reported good performance against SPSO.
+
+Finally, Levy Flight has shown to be useful for helping agents expand their search capacity, in the case of the Levy Flight foraging hypothesis
+[humphries_queiroz_dyer_pade_musyl_schaefer_fuller_brunnschweiler_doyle_houghton_et] which has shown evidence that, in sharks, it can help agents searching for food to better their chances. The application in principle would suggest the same effect for particles in PSO.
+
+10.
+ 
+a) According to the research contained within [Kůrková1992501] and the general theory of Kolmogorov, a multilayer perception can be used to approximate any function. This works even when the number of hidden nuerons is unknown. 
+
+The approach therefore to approximate an n'th order polynomial is to make use of a multilayered neural network to perform the function approximation where the number of inputs is the order of the polynomial. 
+
+However, the problem of such a neural network, is the training procedure. That is where the PSO will come in. A PSO, working with the weights of the neural network as its problem space, contained as a vector, will, be used to optimise the weight vector to the network such that, the mean squared error of the network is minimised. 
+
+This would enable the PSO to search the space for combinations of weights such that the neural network is minimally incorrect when approximating the n'th order polynomial.
+
+The PSO algorithm cannot alone be used for function approximation, as it can only be used to find optimal values in a space for a well defined function. Approximating a function from no prior knowledge is not within its abilties.
+
+The experimental procedure described above can be seen in the [depolynomiaal]. The authors present the Multilayer Neural Network, called the Enhanced Neural Network, and then make use of a PSO to optimise the weights. 
+
+This would have the effect of applying the PSO, which ordinarily cannot be used to do function approximation on its own, to the task of function approximation.
+
+The PSO which has shown to have poor performance in high dimensional problems,([jamian_abdullah_mokhlis_mustafa_bakar_2014] and [monson05]), and so the issue would be to implement several techniques to improve high dimensionality performance. The reason for this, is that number of weights for the Enhanced Neural Network, will grow rapidly as the order of the polynomial increases. Improvements for high dimensionality include [clerc11] and CPSO-Sk.
+
+b) Genetic programming as presented by Koza,in [koza_1998] and [Koza:1989:HGA:1623755.1623877] and discussed later by Fogel in [fogel], is a type of Evolutionary Computation algorithm that uses tree representations instead of vector representations which is often the case in Genetic Algorithms. As trees, the individuals in the populations can grow to arbitrary length and can contain all the elements defined by a grammar. 
+
+Using this as the basis, we can make use of an arbitrary but complete grammar to construct trees of an arbitrary but valid size. From this, it would be possible to approximate any function that could be defined within the grammar we have.
+
+It was shown in [rodríguez-vázquez_oliver-morales_2004],[Yeun2000259] and [kirshenbaum_suermondt_2004] that Genetic Programming can be used to evolve function approximators.
+
+Applying PSO into this for function approximation will take the place of a hybrid algorithm: GP-PSO.
+
+In the GP-PSO, each of the particles in the swarm is actually a tree containing the function approximation. Each maintains a fitness score evaluated based on how well the tree passes the function test cases. 
+
+In addition to a tree structure, there are weights associated with each of the grammar components that correspond to their importance in the approximation of the arbitrary function. 
+
+The PSO will update the weights by performing its searching operations after each particle's tree is updated as per the Genetic Programming algorithm. When introducing new grammar elements into the trees, the weights are considered as opposed to purely random selection. The weights can also have penalty values(negatives) to penalise elements that adversely affect the quality of the solutions.
+
+What will happen, is the different grammar elements, whose importance is stochastically searched for by the PSO will then be used in the Genetic Programming tree components to actually evolve the function approximation.
+
+11.
+
+	1) Counting Method - In this method, each particle makes use of a search radius R around itself which can be adapted during the course of the algorithm. Each particle counts,and stores a list of, the number of other particles that fall within its radius and then the sizes of the lists is taken into account to determine the diversity. The average of the list sizes is taken as the diversity score.. If the particles are clustered together, the average value will be high. If they are not clustered together, the value will be low. In the case described where there are two distinct,disparate groupings, the average value will reflect a lower diversity than when considering just the euclidean distances of all particles to all others. 
+
+	Consider if there were 8 particles into 2 disparate groups. The score given by this metric would be 4 which means that the swarm is still reasonably divided.
+
+
+	2) Clustering Approach - In this method, the objective is to determine the number of clusters that are formed in the swarm. A swarm that shows high diversity will have a large number of clusters where as a swarm with low diversity will only have a few, possibly 1 as convergence occurs.
+
+	The measure works by every particle ranking the distance from itself to all other particles in the swarm. It then takes k particles to make into a grouping. Those particles cannot be formed into another cluster. Lone particles form into their own grouping, taking themselves as the center point.
+
+	Now, calculate the centre point of this grouping, using the swarm diameter equation described in [4630938]. The diameter halved, gives a point called P'. Do this for all clusters that are formed and compute the average distance between the P' values. This will indicate a score. If this value is large, the swarm is apart otherwise it is close together.
+
+12. SACO or Simple Ant Colony Optimisation does not, in its original definition make use of any heuristic information when determining pheromon deposits. Consequently, for the case of shortest path problems as presented, SACO makes the pheromone deposit inversely proportional to the path length to deposit a large amount of pheromone on short paths, which is aimed at encouraging future ants to search along that path. Making it inversely proportional grants shorter paths more quality than longer ones to ants chosing a prospective path whose quality is given in f(x^k(t)). 1/f(x^k(t)) would be larger for smaller values of f(x^k(t)) and smaller for larger values of f(x^k(t)), or larger, less desirable paths.
+
+In terms of the analogy, the work done in [Dorigo2000851] by Dorigo et al, shows that some ant species deposit pheromone proportional to the quality of the food found. Better paths to better food, receive better deposits of pheromone. In particular, the work done by Beckers, Deneubourg and Goss in [beckers_deneubourg_goss_1993] shows that  
+for the ant Lasius Niger, shows proportional pheromone dropping based on the richness of sugar sources.
+
+13. The method proposed here borrows from the work of Bean and Hadj-Alouane who developed an adaptive penalty function for Genetic Algorithms [bean1992a-dual-genetic].
+
+The method works as follows:
+
+	1) Evaluate all completed paths returned by ants in Ant System.
+	2) Evaluate the best path returned. 
+	If the best path violates some constraints, then the penalty measure 
+	P=-(number of paths with conditions violated*[(# of violations in the best path)/(size of that path)])
+	else P=P(t-1).
+
+	3) All ants that violated constraints add P in conjunction with their pheromone update equation.
+
+	The choice of this method displays more intelligence when making penalty decisions than other static methods. Firstly, the penalty is only applied if constraints are violated by any ant. Secondly, the method adapts based on three components: the size of the best path with constraint violations, the number of constraint violations and the total number of paths produced that violated a constraint in some way. 
+
+	The penalty condition is therefore scaled by the most influential ant, with the best path, to a number between [1,0) and then transformed into a larger weight based on the number of ants with violated paths. 
+
+	Consider two cases:
+	A) 5 paths violated constraints with the best path having 7 of the total 10 constraints violated with a path size of 50. In this case, P=0.7
+	B) 10 ants violated only a few constraints with the best path of size=50 only violating 2 constraints. In this case P=0.4
+
+	As more constraints violated generally take more effort to fix than many few-constraint violations, P(A) should be higher than P(B)
+
+14. The lookahead alteration is based on the work done in [Gagn2001ALA]. The author's mechanism
+
+The lookahead method proposed, makes use of two components on the case that r<r0. 
+A: Shortest node distance -the edge with the shortest distance from the current node.
+B: Heuristic Score- A heuristic is used to estimate the distance to goal from the decision node. The best value is the shortest estimate to the goal.
+C: The amount of pheromone on the edge.
+
+AoBoC meaning to pick the edge that has the highest value of A and B and C.
+
+This method improves upon the original formula by using heuristic information to guide the future search. When looking ahead by one node, the next future node with the best heuristic evaluation is a less computationally expensive way, depending on the heuristic calculation, to determine the future prospects of the ant. Work done in [scholvin89] suggests that heuristics can drastically improve search performance.
+
+In the case of being chosen, the ant then knows what its potential optimality from that node is and can continue to evaluate with a 1-node lookahead strategy.
+
+Furthermore, S.J. Russell and P. Norvig in their book [russell02] define admissible functions under the condition “that the function never overestimates the cost of reaching the goal.” This can be seen as the function estimating the cost to reach the goal as not higher than (less than or equal to) the lowest possible cost from the current point in the path. Provided the heuristic chosen is admissible, it will be to the benefit of the search.
+
+15. The equations represented in (17.43) and (17.44) are probability equations, in that they need to produce a probability that works between 0 and 1. In both cases, the probabilities are used to determine whether an ant should up or drop respectively. 
+The threshold value, is the value is for the number of ants required to have a put down/pick probability of 25%. Anything further than that, will dramatically reduce the chances. 
+
+Without the squared operation to flatten the probability curve, the probability of pick up/put down at the threshold value is about 50%.
+
+The particular structure is done to encourage the movement of small clusters of dead ants or objects to larger piles and to discourage the breakup of large clusters of objects. This is because object piles of sizes less than the threshold value, from about half of the value, have a much better chance of moving than objects approaching the threshold and after it.
+
+16. 
+
+	1) The first approach comes from the work of [Handl03ant-basedclustering]. In their approach, the authors used a dynamically adjusted scheme where each ant in teh algorithm received a different γ based on its performance. 
+
+	In this particular case, the scheme made use of successful pick-up and drop off of items. 
+
+	The initial value γ for all ants was sampled from ~U(0,1) but with each iteration, the value is 
+
+		a={
+			a+=0.01 if rFail>0.99
+			a-=0.01 if rFail<0.99
+		}
+		where rFail=#of fails/active {active=100}
+
+	This method is quite adept at retaining adaptivity over the course of the algorithm run. It ensures that a is always current because a is changed potentially in every iteration by a small amount. Furthermore, the adaption is based on the point of the number of failed drop operations. More failed drop operations means that the clustering operation, presuming pick ups, is not happening. Adapting the similarity coefficient to respond to a reduced drop rate will improve how the algorithm clusters. Note that the ants require a period of iterations to build up a number of drop attempts.
+		
+	2) The method proposed below is called the Two Phase Similarity Coefficient Selection method.
+
+	It requires an initial period of time, called the init time, for the ants to build up a number of drop attempts. This is set at 1/10th  of the number of iterations permitted for the algorithm as a whole.
+
+	The initial value γ for all ants was sampled from ~U(0,1).
+	
+	Next, each ant must maintain a count of the number of failed drop attempts it has made. 
+
+	Now, after the initial init time, after every T iterations, the value for all ants will change.
+
+	Rank the ants in terms of the least number of missed drops to the most number of missed drops. Choose the similarity coefficient value associated with the top ranked ant and assign this value to all 50% of the ants, chosen randomly if the best rate is better than the previous best rate. The other 50% will then be assigned new values sampled from ~U(0,1).
+
+	Then the algorithm continues until another T iterations has passed at which point the process is repeated.
+
+	The point of this approach is simultaneously determine a good similiarity coefficient value and perform the clustering. By selecting initially random values, we are able to see the performance relative to missed drops. By choosing the most successful dropper, and then allocating 50% of the ants its value, we can increase the clustering capacity of that part of the cluster to the capacity of the best performing ant while the others are used to search for a better value.
+
+	The approach does rely heavily on stochastic searching but does not significantly increase computation needed, or require sophisticated selection processes, largely automatically updating values as it can.
+
+	17. In [Handl03ant-basedclustering], the authors propose an alternative dropping probability equation:
+
+	Pd={1         if λ(ya)>1
+	    λ(ya)^4   otherwise
+	}
+
+	This approach completely removes γ2 from the probability of dropping. 
+
+	This is accomplished by making use of a different local density calculation, using an additional constraint.
+
+	Although increasing computation required, the alternative method reduces the number of parameters in the algorithm and will mean less time spent parameter tuning.	
+
+
+18. Presented below is an ant inspired model for management for division of labour.
+
+In the scenario, the following tasks exist:
+
+	1)Return gold ore to storage location 1. 
+	2)Move rubble to a storage location 2.  
+	3)Rearrange either rubble or gold to allow for other robots to perform item retrieval more efficiently.
+The robots operate in a 2D grid world with items either gold or rubble.	
+
+We have a given population of robots or agents. The size of this population is n.
+
+The proposed model borrows from the model by Theraulaz et al in [Theraulaz327] but adapts it for multiple tasks.
+
+Each robot has a threshold vector of size 3, where a1,a2 and a3 refers to the threshold value associated with task 1,task 2 and task 3.
+
+A reinforcement mechanism is used to adapt the threshold values over time such that over time, tasks increase in probability of performance relative to a robot not doing them and similarly for as robots do tasks, the probability of future performing tasks decreases.
+
+The model is divided into various phases with corresponding behaviour of robots described in each phase.
+
+1) Initial Phase
+	In the initial phase, the landscape is considered randomly distributed with objects(gold and rubble) in a random distribution.
+	Therefore, to optimise the collection process, the initial threshold values for tasks 1 and 2 are very close to 0 and the initial threshold for task 3 is very close to 1. That is, for tasks 1 and 2, the 0 value is sufficiently higher than the stimulus value and for task 3, it is significantly greater than the stimulus value of task 3.
+	The effect of this is that majority of the robots should start sorting the piles with a small percentage starting to remove and store rubble or gold (it's irrespective which is which at this phase)
+
+2) Collection Phase
+	As the robots begin to perform the sorting task with an initially high chance, the threshold values will be decreased for the task of sorting each time a robot begins to sort and increased whenever a robot opts to sort over collecting rubble or gold.
+
+	As robots are sorting, the threshold values will eventually modified be such that the threshold values for the collection of gold and rubble are increased to the point where they are the likely task chosen, and the sorting task is not likely to be chosen, as per a simple reinforcement model. At this point, the majority of the robots assigned to sorting will then be assigned to collecting and the process will continue until all items are collected.
+
+In this way, the robots will function similarly to ants attempting to process their internal food stores from a pile. Initially most ants will randomly place pieces of food until eventually enough pheromone is placed to develop piles. Then as the food becomes more and more sorted, fewer ants will remain sorting and more will transition to the task of storing food.
+
+
+19. The strategy proposed here, is contained within the work of [Guntsch2001]. The authors note that "often, good solutions to the change instanece will differ only locally from good solutions to the old one." By this, they mean that a new solution or new optima in the space is, often related to the old one due to various facets of the problem nature and so on. The proposed strategy here, the t-Strategy, accounts for the changes by reinitialising based on pheromone values.
+
+The strategy uses a scaling equation {define scaling equation from picture}. The measure d(ik) is defined as the distance between two nodes a and b, as the max of all paths with the product of all pheromone values on edges from node a to b.
+
+The great benefit to this approach, as opposed to a more total and complete reinitialisation, is that the initial coverage of pheromone of prior searches is preserved in the space. The reinitialisation takes place around the paths that led to the optima. In principle, as mentioned above, if new optima are likely located near the old optima, then reinitialising close to them increases the likelihood that the algorithm can track the changes in real time.
+
+20. The specification for the Continuous Ant Colony Optimisation, or CACO is given in [doi:10.1021/ie990700g]. The authors in question have extended the the work done in [Bilchev1995].
+
+In the CACO algorithm, the number of ants used for local searches is nl and ng denotes the number used for global searches. These numbers do not change and are not adapted in the course of the algorithm. 
+
+The division of labour strategy, introduced in [Theraulaz327] could be used to modify the way in which the algorithm assigns ants for local and global searches and lead to more adaptive behaviour in the face of complex landscapes.
+
+The method proposed works as follows:
+
+In the division of labour CACO or DL-CACO, there is a general population of ants called Workers. The worker population is n sized and each ant is polymorphic in capacity in terms of each ant being able to do both local or global searches as per a variable role whose value of 0 indicates a local;y searching ant and 1 indicating a globally searching ant. This can change during algorithm execution.
+
+There are two tasks indicated in the system:
+1) Perform an Iteration of Global Search
+2) Perform an Iteration of Local Search
+
+In the initial phase,
+
+Each ant in the Workers population has a 50% chance to be assigned to as a global searcher ant and a 50% chance to be assigned as a local searching ant.
+
+A number of initial regions nr, is created as well.
+
+Once this initial initialisation has been finished, the algorithm will begin by doing one full iteration of all global searcher ants and local searcher ants.
+
+After two initial runs, the next phase of te strategy kicks in.
+
+From the initial run, a memory of the best solution, region, found is kept per iteration.
+
+The aim here, is to after each iteration of global and local searcher ants, to adjust the composition and distribution of the current workload amongst all ants in the group.
+
+If the new best solution is less than the old, then adjustments to the workload must happen, according to the rules below:
+
+1) if the majority of regions are > 1 Std deviation from the best, then
+   1) reset all ants.
+   2) set the probability that an ant is chosen to be a global searcher at 75%.
+   3) Reassign all ants using the new probability.
+
+2) otherwise
+   1) reset all ants.
+   2) set the probability that an ant is chosen to be a local searcher at 75%.
+   3) Reassign all ants using the new probability.
+
+Continue the algorithm
+Otherwise, continue with the current workload.
+
+21. Taking some information and definitions provided in [Jones:2011:CFA:2023607.2023640], a comparison between the Firefly Algorithm or FFA and Particle Swarm Optimisation would yield the some similarities and differences related to each.
+
+The firefly algorithm is similar in nature to PSO in a number of ways. Both are swarm based and stochastic by initial nature[kennedy95]. Furthermore, there is a social component, in terms of a force of attraction between two units in the swarm, that exists in the firefly algorithm. This is where fireflies are attracted towards other fireflies with a greater brightness(fitness) than them [yang_2013]. This is similar to the concept of the social component in PSO where the better partials(or the best particle) exerts an attractive force to other particles that attract them to it[kennedy95].
+
+However there are some differences. Firstly, Fireflies react instantly to stimulus from others and each firefly will react multiple times to others in the course of an iteration, moving towards each better firefly with some reduction of the brightness of the attractor firefly. In that sense, attractors become less attractive the closer a firefly gets. The use of the inverse square law, over search velocities demonstrates this. In the case of PSO[kennedy95], an attractor particle, such as the gbest, does not reduce in attractiveness as another gets close to it. Rather, other forces such as the particle's best personal position, and its own inertia, prevent the attracted particle from immediately following the attractor.
+
+That being said, it can be shown that, with minor modifications, the firefly algorithm devolves into a basic PSO. These modifications include that if y ->0, then the equation devolves into the standard PSO update equation. This claim is supported by both [Weyland201597] and [lones_2014]. Therefore although it is slightly different, Firefly Algorithm remains at best, a minor modification to the functioning of PSO.
+
+22. In physics, the inverse square law, indicates a wave, such as light, "decreases in proportion to the square of the distance from its source",[inversesquarelaw]. This particular property is used in the firefly algorithm to justify the equation e^(-y|||x(t)-x(it)|^2). In this particular case, taking the square inverse of the distance between two fireflies as a measure of the attractive force between them.
+
+23. In the definition for the work on PSO[kennedy95], Kennedy and Eberhart aimed to deliberately model how the simple interactive behaviours of birds in flight were able to, en mass, create complex behaviours beyond the capacities of a single bird. The reasoning behind the swarm, in swarm-based optimisation, is that some measure of interactivity and feedback occurs between the members of the swarm. The Cuckoo Search, referenced in [Jones:2011:CFA:2023607.2023640] however, does not at all have any interactivity between any of the searching agents. There are no influences of other searching agents nests/birds that influence the performance of others in any way. Rather, random walk choice and Levy walks, are used to move solutions through the search space with no input from other solutions to guide the search process in any way.
+
+24. As discussed in [Jones:2011:CFA:2023607.2023640], the artificial bee colony algorithm makes use of directed searching which is what is used by PSO in terms of the cognitive, social and inertia components all influencing the search capacities of the particles in the swarm. According to the definition provided in [Karaboga05], the ABC, Artificial Bee Colony algorithm, makes use of social cooperation to perform a directed search. In this way it is similar to PSO. There are 3 types of bees:employed bees, onlooker bees, and scout bees. The various types of bees all share information with one another in various forms, such as the onlooker bees tending to sources found by employed bees. In this way, information about the search space is spread to more searching agents, increasing its capacity to search the full space, as is the case with PSO.
+
+25. In the works of [nonlinearm2013], we have our definitions for the concept of a Pareto Front. In multi-objective optimisation problems, it is not possible to define fitness within the terms of a single objective, by nature. Rather, the fitnes of particular solution within the context of a set of objective functions, can be thought of with as the set of Pareto Optimal Outcomes or the Pareto front. 
+
+A solution is called dominating if that solution it is as least as feasible as another solution for all objectives and better than the other solution for at least one objective. Consequentially, a solution is called Pareto Optimal if no other solution dominates it.
+
+The problem of adding more objectives, vastly increases the computational complexity of calculating the Pareto front, exponentially even.
+
+Each new objective adds a new search domain, that must be evaluated with all other search domains in each variable as well as a potential range of solutions that must be comapred against all other solutions. Each additional objective creates another function that must be determined to be dominated or non-dominated by all the others. This increased difficulty in the search space, only increases the complexity faced by the search algorithm for optimising all of the objectives to find the Pareto Front.
+
+26. Considering the penalty methods for constrained optimisation [Tandon2002595],[Zhang01],[Parsopoulos02particleswarm], there are some advantages and disadvantages to the penalty method for constrained optimisation.
+
+The penalty method, makes use of a penalty parameter, called c, here. This parameter is simply added to the objective function to impose a high cost for violating the constraints imposed. The idea of adding the penalty term is that it alters the objective landscape such that, feasible regions without constraint violation become fitter than areas that violate constraints but have higher objective function fitness. The principle being that this will naturally inform the search into the search spaces with feasible regions.
+
+There are a number of benefits to this approach. Firstly, it's from an implementation perspective, very simple and quick to add a term to the objective function. This does not dramatically alter the optimisation algorithm code nor change the implementation seriously. Secondly, the approach makes conceptual sense and does so, in certain experimental trials such as in [Parsopoulos02particleswarm], show good performance for helping to establish the feasible regions in the domain for searching.
+
+This approach however, has a number of issues. The first problem is with the penalty parameter itself. There is no clear prescription for what value the parameter must be and it will require either parameter tuning, increasing complexity of existing tuning, dynamic or adaptive methods to ensure it remains relevant to the problem being chosen. The problem is excerbated with multiple objective constraints and separate constraints for different dimensions or subcomponents which themselves must be optimised or otherwise selected for. 
+
+The second issue is that it changes the nature of the fitness landscape in such a way that it can affect how the optimisation process functions. For example, large values of c, create steep valleys by the constraint boundaries. These present complex obstacles to overcome and will dramatically affect convergence and solution quality by limitating exploration fo the space.
+
+27. The Lagrangian Multiplier Technique [constrained_optimization_and_lagrange_multiplier_methods_1982]
+is a method that can be used to solve constrained problems. It aims to convert a constrained problem into an unconstrained one which can then be solved.
+
+The technique aims to form a new equation the Lagrangian Equation, L, incorporating both the original objective and the constraints that it is subject to.
+
+The property of the Lagrangian Function is that if maximised or minimised, the corresponding original objective function is similarly maximised or minimised with consideration paid to the constraints.
+
+This is illustrated by a simple example.
+
+Consider the following:
+An objective function that we wish to maximise: 
+
+o(x,y)=50x-2x^2 -xy -3y^2 +95y (1)
+
+with the constraint
+x+y=25
+
+The first step to getting the Lagrangian is to formulate the constraint as an equality to 0:
+
+(2) x+y-25=0
+
+Next we multiply this (2) by λ, the Lagrangian Multiplier.
+
+We now get 
+
+(3) λ(x+y-25).
+
+Now we can add this to (1) to form the Lagrangian
+
+L=50x-2x^2 -xy -3y^2 +95y+λ(x+y-25)
+
+Now from this, the maximal of the Lagrangian, will also maximise the original function.
+
