@@ -29,19 +29,19 @@ The idea is fundamentally sound. If mutation, \cite{spears_1993} can be shown to
 \section{Question 3}
 In the work of \cite{560396}, the author proposes a model called GALME or GA using Large Mutation rate and population-Elitist selection. The author posits, and presents findings that suggest, that large mutation rates can be useful to the process of GA.
 
-The issue presented, Multi-Modal functions, is why the author developed GALME. The multi-modal function. A multi-modal function, defined here \cite{ECJC:ECJC5}, is one with many local optima. The problem space therefore consists of many peaks and troughs with only one, out of possibly many, being the actual global optima. This presents a challenge for methods to optimise as conventional standard methods of the GA, have shown,behaviour of being trapped in the local optima \cite{560396}. The reason for this is that traditional GAs made use of relatively small mutation rates to preserve the good solutions found. These small mutation rates offered insufficient exploration capacity and the individuals became trapped in the local optima, unable to sufficiently explore the space around and then exploiting that trapped local optima.
+The issue presented, Multi-Modal functions, is why the author developed GALME: The multimodal function. A multimodal function, defined here \cite{beasley_bull_martin_1993}, is one with many local optima. The problem space therefore consists of many peaks and troughs with only one, out of possibly many, being the actual global optima. This presents a challenge for methods to optimise as conventional standard methods of the GA, have shown,behaviour of being trapped in the local optima \cite{560396}. The reason for this is that traditional GAs made use of relatively small mutation rates to preserve the good solutions found. These small mutation rates offered insufficient exploration capacity and the individuals became trapped in the local optima, unable to sufficiently explore the space around and then exploiting that trapped local optima.
 
 
 The effect that a large mutation rate would have then, is that it would mean that the individuals would move larger distances through the search space, as compared to a smaller mutation rate, and better be able to explore. This capacity would mean that it would reduce the chances that the individuals in the population would remain trapped in any local optima. 
 
 
 \section{Question 4}
-The PCX operator introduced in \cite{deb_joshi_anand_2002} by Deb et al, is an operator that has two central ideas: parent-centric recombination and multi-parent recombination.
+The PCX operator introduced in \cite{deb_anand_joshi_2002} by Deb et al, is an operator that has two central ideas: parent-centric recombination and multi-parent recombination.
 The implication of parent-centric is that when created, offspring are of similar values to their parents, that is the offspring solution is close in nature to its parent solutions. 
 
 What is important to consider is the impact of large and small values for the deviations $o_1$ and $o_1$ in terms of how they influence the ability of the operator in the exploitation/exploration trade-off.
 
-The normal distribution,\cite{harrison_2017}, is a distribution used in the PCX operator. Two variables \cite{deb_joshi_anand_2002} $w_c$ and $w_n$ are used as "zero mean, normally distributed variables". Zero-meaned to orient the distribution around 0, giving the ability to generate positive and negative numbers with equal distribution in that respect. What is important, is how  $o_1$ and  $o_2$ change the nature of the distribution.
+The normal distribution,\cite{harrison_2017}, is a distribution used in the PCX operator. Two variables \cite{deb_anand_joshi_2002} $w_c$ and $w_n$ are used as "zero mean, normally distributed variables". Zero-meaned to orient the distribution around 0, giving the ability to generate positive and negative numbers with equal distribution in that respect. What is important, is how  $o_1$ and  $o_2$ change the nature of the distribution.
 
 As indicated by  \cite{areas_under_normal_distribution} and  \cite{normal_distribution}, the standard deviations used for the sampling from the distribution change how the probabilities of what can be expected. A general rule for the normal distribution \cite{normal_distribution} is 68\% of the data of the distribution will come from +- one standard deviation from the mean. Therefore, we can expect, when sampling new values for offspring, that 68\% of the data for the process, will come from a region between -1 standard deviation and +1 standard deviation from the mean. Similarly 95\% of the values of the distribution are within 1.96 deviations from the mean.
 
@@ -115,7 +115,7 @@ This strategy has the benefit that if similar parents would in principle produce
 This approach has some drawbacks however. The choice the similarity criterion(threshold) presents a problem for the overall performance of the algorithm. Too low, and not enough exploitation will occur later on to refine any good solutions and too high and premature convergence will happen. Additionally, the problem of randomly initialising individuals can introduce issues if individuals are complex in nature or otherwise non-trivial to create randomly.
 
 Age Layered Population Structure
-The ALPS or Age Layered Population Structure was proposed by Hornby \cite{Hornby} and unlike other methods, moves away from genotypic or phenotypic distance and similarity measures and rather relies on an age based model. In this model, individuals are all assigned into layers, where each layer has a maximum age threshold value. No individuals can be present in a layer with a threshold less than their current age value. Individuals age simply, increasing in age over successive	generations by 1. Finally, individuals are not allowed to breed with others outside their layer. The author proposed several schemes to assign age limits like Linear or Fibonacci methods. 
+The ALPS or Age Layered Population Structure was proposed by Hornby \cite{Hornby2006} and unlike other methods, moves away from genotypic or phenotypic distance and similarity measures and rather relies on an age based model. In this model, individuals are all assigned into layers, where each layer has a maximum age threshold value. No individuals can be present in a layer with a threshold less than their current age value. Individuals age simply, increasing in age over successive	generations by 1. Finally, individuals are not allowed to breed with others outside their layer. The author proposed several schemes to assign age limits like Linear or Fibonacci methods. 
 
 How ALPS works to prevent premature convergence is by limiting the breeding capacity of individuals to only others in their age group. Therefore, from a new population, as that one ages, new dissimilar individuals are added. Each population layer becomes more different to the layers behind it and in principle, members in each layer become more similar as they advance into layers.
 
@@ -123,7 +123,7 @@ There are numerous advantages to this method. Firstly, it does not depend on the
 
 The primary concern of the algorithm is that it requires careful selection of the age limitations on each of the layers. Without careful age selection, nothing will stop the layers from becoming too similar early on and then propagating their premature convergence later. Additionally, the method restricts competition and selective choice of individuals so in some ways, strictly delineates the search process into phases unable to influence newer phases. It is assumed by the model that older generations should not influence newer ones at all and potentially good information is lost in this way. 
 \section{Question 8}
-In the work done by [4490037],the authors presented the novel idea of solving systems of linear equations as a solving a Multi-Objective Optimisation problem. That is, to formula a system of equations into a single multi-objective optimisation problem and use a GA to solve for the optimal solution. Once found, it can be returned and used in the original equation with little issue.
+In the work done by [Grosan2008],the authors presented the novel idea of solving systems of linear equations as a solving a Multi-Objective Optimisation problem. That is, to formula a system of equations into a single multi-objective optimisation problem and use a GA to solve for the optimal solution. Once found, it can be returned and used in the original equation with little issue.
 
  	There are many benefits to this approach. Firstly the task to formulate into a multi-objective optimisation problem, makes a lot of immediate sense. A system of equations is composed of multiple equations, all with parameters, some of which may overlap across multiple equations. The task to solve the system, is to find a set of input variables such that the polynomial equations can be satisfied. 
  	Furthermore, this approach allows the GA to use population methods to work on multiple solutions at once. Rather than traditional methods such as  Newton–Raphson, which can only produce a single answer and rely on a good initial value, the GA will be able to develop multiple solutions without initial educated guesses or decisions made by the user.
@@ -140,7 +140,7 @@ In the work done by [4490037],the authors presented the novel idea of solving sy
 
 	A set of fixed size should be maintained of all non-dominated solutions. Each new solution is introducing all new non-dominated solutions from all of the individuals. 
 
-	Finally, as per \cite{4490037}, the authors imposed an additional criteria that a solution dominates another based on the absolute sum of the of all parameters in the objective function set being closer to 0, the initial requirement of a system of linear equations.
+	Finally, as per \cite{Grosan2008}, the authors imposed an additional criteria that a solution dominates another based on the absolute sum of the of all parameters in the objective function set being closer to 0, the initial requirement of a system of linear equations.
 
 	{Present equation showing one thing being compared to another}
 
@@ -148,7 +148,7 @@ In the work done by [4490037],the authors presented the novel idea of solving sy
 a)
 The problem faced by a standard GA that is used to do this type of problem solving, is that of premature convergence. Without measures to remedy this problem, it is likely that the GA will, in this multi-modal landscape, get trapped in local optima and always find a sub-optimal solution.	
 
-The problem landscape is multi-modal because there are, as shown by \cite{4490037} often multiple ways a GA could produce a solution to the system of equation problem and these multiple solutions all exist on the same solution space.
+The problem landscape is multi-modal because there are, as shown by \cite{Grosan2008} often multiple ways a GA could produce a solution to the system of equation problem and these multiple solutions all exist on the same solution space.
 
 b) A proposed method to solve this problem is as follows:
 
@@ -159,7 +159,7 @@ b) A proposed method to solve this problem is as follows:
 	This approach makes use of very metrics to forestall premature convergence. Firstly, the high mutation rate at the onset of the algorithm will help to introduce new material into the solution space. As this is decreased over time, the later individuals will be less mutated than the initial. Secondly, a similarity metric is used to evaluate the similarity of individuals. Similar individuals being prevented from crossing over, will prevent offspring that look similar to their parents. By preventing this, it will prevent premature convergence as all offspring are forced to look dissimilar to their parent individuals.
 
 \section{Question 10}
-Selective pressure is defined by \cite{back_1994} as "as the speed at which the best solution will occupy the entire population by repeated application of the selection operator alone". In simple terms, a high selective pressure means that a population very quickly loses diversity of individuals, with the characteristics of a few, or one, individual found in great abundance in all individuals. Similarly low selective pressure means that the time required for this process to happen is far longer.
+Selective pressure is defined by as "as the speed at which the best solution will occupy the entire population by repeated application of the selection operator alone" in \cite{engelCI02}. It is also referred to by Back in \cite{Back94selectivepressure} as a means to characterise a strong emphasis on selection of the best individuals. In simple terms, a high selective pressure means that a population very quickly loses diversity of individuals, with the characteristics of a few, or one, individual found in great abundance in all individuals. Similarly low selective pressure means that the time required for this process to happen is far longer.
 
 A simple technique for reducing selective pressure is to switch to a selection operator with a low selective pressure.  
 
@@ -174,7 +174,7 @@ That is, consider the probability of sampling here as $U(0,U(0,n_s−1))$. The e
 
 A final method would be to make use of some adaptive technique in the selection process. For example, initially making use of a selection operator like Random Selection to prevent premature convergence. Then after some criterion, such as iterations, switch to another selection operator like Tournament Selection to exploit the solutions found better.
 \section{Question 11}
-a) When considering the size of trees in Genetic Programming, the problem of bloat occurs. Specifically, according to \cite{Poli:2008:FGG:1796422}, bloat is the observed phenomenon whereby a tree grows in size, often significantly, but for marginal or minimal gains in fitness. Consequently, as discussed in \cite{trujillo_naredo_martínez_2013}, bloat is an issue whereby without directed measures to curtail tree growth, there is an expansion of tree size for minimal fitness gain. This leads to inefficient tree structures, with inactive or dead components that do nothing for the original tree's ability to approximate a solution to the problem.
+a) When considering the size of trees in Genetic Programming, the problem of bloat occurs. Specifically, according to \cite{poli_langdon_mcphee_koza_2008}, bloat is the observed phenomenon whereby a tree grows in size, often significantly, but for marginal or minimal gains in fitness. Consequently, as discussed in \cite{Trujillo2013}, bloat is an issue whereby without directed measures to curtail tree growth, there is an expansion of tree size for minimal fitness gain. This leads to inefficient tree structures, with inactive or dead components that do nothing for the original tree's ability to approximate a solution to the problem.
 
 	By way of illustration, consider the task of evolving a mathematical function from data with noise.
 
@@ -186,17 +186,16 @@ a) When considering the size of trees in Genetic Programming, the problem of blo
 	The first method is considered to be more "classical" and the second is more recent.
 
 
-		1) The initial and natural suggestion is to impose a hard limitation on the tree size. There are many ways to do this, with the method proposed by Koza in \cite{koza_2000} being used as the basis for the discussion around this method. 
+		1) The initial and natural suggestion is to impose a hard limitation on the tree size. There are many ways to do this, with the method proposed by Koza in \cite{koza_1994} being used as the basis for the discussion around this method. 
 
-		In this method, a limitation on size and depth is imposed onto trees. Offspring that violate the limit, are not returned, with one of their parents returned instead. The consequence of this approach however, is that incrementally, the population will gradually build up in size until they all reach near maximum size which is not an ideal situation. Other authors have proposed investigations into dynamically altering the size and depth limitations on the trees as well as alternatives towards the banning of out of limit offspring such as in \cite{silva_costa_2005} and \cite{silva_silva_costa_2005_2}.
+		In this method, a limitation on size and depth is imposed onto trees. Offspring that violate the limit, are not returned, with one of their parents returned instead. The consequence of this approach however, is that incrementally, the population will gradually build up in size until they all reach near maximum size which is not an ideal situation. Other authors have proposed investigations into dynamically altering the size and depth limitations on the trees as well as alternatives towards the banning of out of limit offspring such as in \cite{silva_costa_2005} and \cite{silva_silva_costa_2005}.
 
 		However these do not go away from the more fundamental problem: hard limitations on tree sizes do not encourage the development of smarter or better tree structures, it merely eliminates offending tree structures who grew beyond a sometimes arbitrary limit. It does not address any of the more underlying issues that might suggest why trees bloat as they do.
 
-		2) The method proposed here, by Koza in \cite{koza_1998}, is expanded upon in \cite{poli_mcphee_2013_1}. The Parsimony Pressure method, is a well used method for controlling bloat.
+		2) The method proposed here, by Koza in \cite{koza_1998}, is expanded upon in \cite{poli_langdon_mcphee_koza_2008}. The Parsimony Pressure method, is a well used method for controlling bloat.
 
 		It works by applying a penalty measure,to the selection probability of offending trees in terms of constraints(size and/or depth). This penalty measure substracts from the selection probability of an offending tree, in proportion to its size, from the fitness value of the tree. More errant trees, will suffer increased loss of fitness, and consequently, be used less in producing new offspring.
-
-		Of course, the fundamental issue of this method is determining the penalty value or the parsimony coefficient. This method according to \cite{Poli:2008:FGG:1796422} is generally implemented without dynamic or adaptive parameter modification; although certainly it could be investigated and implemented.
+Of course, the fundamental issue of this method is determining the penalty value or the parsimony coefficient. This method according to \cite{poli_langdon_mcphee_koza_2008} is generally implemented without dynamic or adaptive parameter modification; although certainly it could be researched and implemented and was in fact investigated in by Poli and Mcphee \cite{poli_mcphee_2013}.
 \section{Question 12}
 a) The mean of 0 according to \cite{normal_distribution} would mean that values in the distribution are equally divided between a positive and negative domain. Since the optimisation problem generally works in the real-value domain, and no assumptions can generally be made about the problem domain, it is imperative that sampled values be able to be both positive and negative, so as to be able to collate the directional magnitude of positive/negative values towards a particular direction in the search space. Without a mean of zero, the direction, either positive or negative, will be biased by the value chosen. 0 guarantees a fair, 50\%, split of probabilities between negative and positive values.
 
@@ -216,7 +215,7 @@ a) The mean of 0 according to \cite{normal_distribution} would mean that values 
 
 	This, means that for the purposes of sampling values, both distributions are fundamentally equivalent and offer no balance between exploration and exploitation. This is because the only mechanism separating random from chaotic is the deterministic nature of the latter which is of limited utility without prior sampling. 
 \section{Question 13}
-The authors in \cite{667339},Yuryevich and Wong, proposed equation 
+The authors Yuryevich and Wong in \cite{yuryevich_wong_1999}, proposed equation 
     $U(0, 1)(ˆyj(t) − xij(t))$ as a uniform random mutation operator.
 
     The first initial issue with this operator is that the Uniform random number is generated between 0 and 1. As per \cite{wolframUniform}, the expected value of this is 0.5 $((0+1)/2)$. The issue with this, is that this is not a non-zero mean, meaning that a drift bias is introduced away from an even distribution of positive and negative numbers (in the case of a mean of 0) and towards a distribution that biases the middle value of 0.5. Accordingly, this means that the influence of the difference,constructed from the best individual to the current, will have on average, half the influence of the full difference on mutating the individual.
@@ -227,14 +226,12 @@ The authors in \cite{667339},Yuryevich and Wong, proposed equation
 
     The merit of the approach is that it introduces a guided, exploitative capacity to the mutation process by directing individuals towards the best performing other individual in the population. This is noted to be similar in nature to the social component on teh Particle Swarm Optimisation velocity update equation. This is of course distinct amongst the distributions presented in \cite{engelCI02} as it attempts to use some information about the performance of the another individual in the  population to direct other individuals to better regions.
 \section{Question 14}
-a) True.
-
-	b)  Selective pressure is defined by \cite{back_1994} as "as the speed at which the best solution will occupy the entire population by repeated application of the selection operator alone". When considering the selective pressure of Evolutionary Programming, consider that the measures indicated, in \cite{engelCI02}, are: elitism, tournament selection, proportional roulette-wheel selection and non-linear ranking.
-	All of these models make use of fitness to select individuals, to various degrees.
-
+a)True.
+b)Selective pressure is defined by \cite{Back94selectivepressure} as a means to characterise a strong emphasis on selection of the best individuals. When considering the selective pressure of Evolutionary Programming, consider that the measures indicated, in \cite{engelCI02}, are: elitism, tournament selection, proportional roulette-wheel selection and non-linear 
+ranking.	All of these models make use of fitness to select individuals, to various degrees.
 	The Elitism operator always selects u best individuals. Tournament selection selects only u best individuals through a stochastic selection. Proportional selection uses roulette-wheel selection to select individuals but this allocates the probability of choosing an individual proportional to their fitness meaning more fit individuals dominate more of the probability chance than less fit. Finally, non-linear ranking can be used to find u elite individuals. All of these methods generally enforce that the best, most fit individuals will be present in the next generation, and over time, the best will come to dominate the population and for those reasons, it has a high selective pressure.
 \section{Question 15}
-In the paper \cite{549062}, the authors present an Evolutionary Programming based approach to perform clustering. The proposal below is based on this.
+In the paper \cite{Sarkar1996}, the authors present an Evolutionary Programming based approach to perform clustering. The proposal below is based on this.
 
 The approach presented does not rely on the a specified number of clusters, as in K-Means. Rather, the ideal number of clusters evolve through the execution of the algorithm.
 
@@ -242,7 +239,7 @@ The initial population consists of a sets of clusters, randomly generating from 
 
 Importantly, the fitness for each set is measured and each set spawns an offspring set. This is subject to the process of mutation and then selection of the new generation occurs again.
 
-The fitness value of a set is given as $1/Davies-Bouldin_index$ \cite{4766909} which is a well known metric for determining clustering effectiveness.
+The fitness value of a set is given as $1/Davies-Bouldin_index$ \cite{Jain1988} which is a well known metric for determining clustering effectiveness.
 
 Once the fitness of the parents is evaluated, the offspring clusters are mutated by applying the Modified K-Means algorithm to each cluster, producing new solutions which can then be evaluated against the parents.
 
@@ -264,7 +261,7 @@ a) Differential Evolution, defined by Storner and Price in {Storn1997}, is diffe
 
 	So the effect of that on a small population is that the population will quickly move towards optima in the space and then stay there, with potentially some members moving again before settling down. The small population size means that a poorer coverage of the search space occurs and generally leads to premature convergence as supported by [5460766].
 \section{Question 17}
-The authors of \cite{759866} presented equation (13.15) in their as a way to increase DE population diversity. This approach, adapted form other mutation operators, injects uniform noise into the components of the trial vectors.
+The authors of \cite{chang_chang_1999} presented equation (13.15) in their as a way to increase DE population diversity. This approach, adapted form other mutation operators, injects uniform noise into the components of the trial vectors.
 
 The uniform distribution \cite{wolframUniform}, is a particular distribution with the property of a constant equal probability of sampling a value between an interval [a,b].
 
@@ -282,7 +279,7 @@ Difference vectors are used then, to determine the magnitude and direction of st
 
 According to the Central Limit Theorem, \cite{davidson_2002}, the step sizes will approach a Normal Distribution if the population is large enough. That is, a random variable sample will approach Normal Distribution if the number of samples tends to infinity. This would mean that a sufficiently large pool of samples will begin to approximate the Normal Distribution. 
 
-To ensure no genetic drift, the mean of the samples for these difference vectors must be zero to equally allow for positive and negative values. This is shown to be the case for sufficiently large populations by the investigations of \cite{price1997} and \cite{cruz_willigenburg_straten_2003}. The predication for this is that the individuals must be selected uniformly which is the case in the Differential Evolution algorithm.
+To ensure no genetic drift, the mean of the samples for these difference vectors must be zero to equally allow for positive and negative values. This is shown to be the case for sufficiently large populations by the investigations of \cite{price_1997} and \cite{cruz_willigenburg_straten_2003}. The predication for this is that the individuals must be selected uniformly which is the case in the Differential Evolution algorithm.
 
 Therefore, with a Normal Distribution with a zero mean for sufficiently large populations, we can avoid the problem of genetic drift. 
 \section{Question 19}
@@ -368,7 +365,7 @@ a) all versus all sampling: this approached defined in \cite{axelrod-1987b} work
 
 	Therefore, between generation, very strong solutions in both populations will receive massive updates to their fitness and weaker solutions will be thrown down significantly. Middling level solutions will potentially fluctuate as they are compared against all other individuals. 
 
-	b) random sampling: this approach defined in \cite{REED1967319} is where the fitness of an individual is tested against a selected group (one but possibly more).
+	b) random sampling: this approach defined in \cite{reed_toombs_barricelli_1967} is where the fitness of an individual is tested against a selected group (one but possibly more).
 
 	In comparison to the above method, random sampling will see generally a smaller potential fitness change per individual per generation, depending on the size of the samples. In this way, the potential for some individuals to never be compared and retain their fitness from generation to generation exists. 
 
@@ -390,9 +387,9 @@ a) all versus all sampling: this approached defined in \cite{axelrod-1987b} work
 
 	The larger concern is how the best individual, who could represent only a local optima, might have on influencing the whole entirety of the opposing population. This opens up the potential for the performance of the best particle to potentially adjust the search process of an entire population where that best particle might still represent a suboptimal solution itself.
 \section{Question 23}
-According to the taxonomy provided in \cite{fukuda_kubota_1998} by Kubota and Fukuda, a particular type of Competitive Coevolutionary algorithm, a Competition subclass of the Competitive algorithm could be adapted to help a Genetic program evolve a decision tree for a given problem.	
+According to the taxonomy provided in \cite{Fukuda1998} by Kubota and Fukuda, a particular type of Competitive Coevolutionary algorithm, a Competition subclass of the Competitive algorithm could be adapted to help a Genetic program evolve a decision tree for a given problem.	
 
-Based on the work done in \cite{stoean_stoean_2014} by Stoean et al.,  an approach proposed initially by Kinnear and Siegel \cite{Kinnear1994CompetitivelyED} to use competitive coevolution for the task of natural language processing is considered. The approach is adapted to the task of evolving a decision tree using Genetic Programming.
+Based on the work done in \cite{stoean2006} by Stoean et al.,  an approach proposed initially by Kinnear and Siegel \cite{kinnear1994} to use competitive coevolution for the task of natural language processing is considered. The approach is adapted to the task of evolving a decision tree using Genetic Programming.
 
 In terms of the approach the following must first be defined: Population A, the Decision Tree Population and Population B, the Test Case Population.
 
@@ -410,7 +407,7 @@ The structure for the populations reflects a simple scenario of test case vs cla
 
 The fitness function is defined for both, populations as the number of test cases passed and the number of trees who have failed the test case respectively. Failing a classification as a decision will decrease fitness and being passed as a test case will decrease fitness.
 
-The sampling methodolgy used is Random Sampling according to \cite{REED1967319}. This is a computationally cheap method of increasing the exposure of population elements against each other to other members of the population. Its low selective pressure, also helps prevent the populations from becoming too homogeneous too quickly.
+The sampling methodolgy used is Random Sampling according to \cite{reed_toombs_barricelli_1967}. This is a computationally cheap method of increasing the exposure of population elements against each other to other members of the population. Its low selective pressure, also helps prevent the populations from becoming too homogeneous too quickly.
 
 Both populations once initialised are optimised concurrently, with fitness evaluations, mutations and crossover occurring based on the measures described above.
 
